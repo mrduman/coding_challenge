@@ -1,4 +1,10 @@
-import { Card, CardContent, Stack, Typography } from "@mui/material";
+import {
+  Card,
+  CardContent,
+  Pagination,
+  Stack,
+  Typography,
+} from "@mui/material";
 import axios from "axios";
 import { ReactElement, useEffect, useState } from "react";
 import { Startup } from "../../Types/Startup";
@@ -6,6 +12,18 @@ import { StartupHttpService } from "../../Http/Startup/Startup.http.service";
 
 export default function StartupList(): ReactElement {
   const [startups, setStartups] = useState<Startup[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const pageSize = 20;
+
+  const pageData = startups.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
+
+  const handleChangePage = (event: any, newPage: any) => {
+    setCurrentPage(newPage);
+  };
 
   useEffect(() => {
     // const fetchData = async () => {
@@ -15,7 +33,7 @@ export default function StartupList(): ReactElement {
     // };
 
     const fetchData = async () => {
-      const response = await axios.get("/api/startups");
+      const response = await axios.get("/api/startups?all=true");
       const startup = response.data;
 
       setStartups(startup);
@@ -26,7 +44,12 @@ export default function StartupList(): ReactElement {
 
   return (
     <Stack>
-      {startups.map((startup) => {
+      <Pagination
+        count={Math.ceil(startups.length / pageSize)}
+        page={currentPage}
+        onChange={handleChangePage}
+      />
+      {pageData.map((startup) => {
         return (
           <Card sx={{ mb: 2 }} key={startup.id}>
             <CardContent>
