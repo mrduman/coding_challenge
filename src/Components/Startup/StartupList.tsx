@@ -1,5 +1,48 @@
-import { Fragment, ReactElement } from "react";
+import { Card, CardContent, Stack, Typography } from "@mui/material";
+import axios from "axios";
+import { ReactElement, useEffect, useState } from "react";
+import { Startup } from "../../Types/Startup";
+import { StartupHttpService } from "../../Http/Startup/Startup.http.service";
 
 export default function StartupList(): ReactElement {
-  return <Fragment></Fragment>;
+  const [startups, setStartups] = useState<Startup[]>([]);
+
+  useEffect(() => {
+    // const fetchData = async () => {
+    //   const response = await StartupHttpService.getStartups();
+
+    //   setStartups(response);
+    // };
+
+    const fetchData = async () => {
+      const response = await axios.get("/api/startups");
+      const startup = response.data;
+
+      setStartups(startup);
+    };
+
+    fetchData();
+  }, []);
+
+  return (
+    <Stack>
+      {startups.map((startup) => {
+        return (
+          <Card sx={{ mb: 2 }} key={startup.id}>
+            <CardContent>
+              <Typography>{startup.name}</Typography>
+              <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                Founded : {new Date(startup.dateFounded).getFullYear()} |{" "}
+                {startup.employees} Employees | {startup.totalFunding} $ |{" "}
+                {startup.currentInvestmentStage}
+              </Typography>
+              <Typography variant="body2">
+                {startup.shortDescription}
+              </Typography>
+            </CardContent>
+          </Card>
+        );
+      })}
+    </Stack>
+  );
 }
