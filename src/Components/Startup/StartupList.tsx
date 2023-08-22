@@ -26,18 +26,18 @@ export default function StartupList(): ReactElement {
   };
 
   useEffect(() => {
-    // const fetchData = async () => {
-    //   const response = await StartupHttpService.getStartups();
-
-    //   setStartups(response);
-    // };
-
     const fetchData = async () => {
-      const response = await axios.get("/api/startups?all=true");
-      const startup = response.data;
+      const response = await StartupHttpService.getStartups();
 
-      setStartups(startup);
+      setStartups(response);
     };
+
+    // const fetchData = async () => {
+    //   const response = await axios.get("/api/startups?all=true");
+    //   const startup = response.data;
+
+    //   setStartups(startup);
+    // };
 
     fetchData();
   }, []);
